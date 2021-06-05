@@ -1,5 +1,4 @@
 defmodule Cryptographer.Aes.TableTest do
-
   @table [
     0x63,
     0x7C,
@@ -262,10 +261,10 @@ defmodule Cryptographer.Aes.TableTest do
   use ExUnit.Case
 
   alias Cryptographer.Aes.Table
-  
+
   describe "get/0" do
     test "returns the complete substitution table" do
-      assert Table.get() == @table 
+      assert Table.get() == @table
     end
   end
 
