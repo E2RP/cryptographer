@@ -1,22 +1,43 @@
 defmodule Cryptographer.Aes.Key.SchedulerTest do
-  use ExUnit.Case
 
+  use ExUnit.Case
   alias Cryptographer.Aes.Key.Scheduler
 
+  # describe "expand_key/2" do
+  #   setup do
+  #     %{key: <<126, 220, 51, 201, 57, 209, 144, 204, 152, 147, 172, 251, 212, 102, 205, 245>>}
+  #   end
+
+  #   test "returns a 128 bit key correctly expanded", %{key: key} do
+  #     assert Scheduler.expand_key(key, 1) |> String.length() == 8*16
+  #   end
+  # end
+
   describe "one_byte_left_rotate_word/1" do
-    test "returns a rotated word by one byte" do
-      assert Scheduler.one_byte_left_rotate_word("ABCD") == "BCDA"
-      assert Scheduler.one_byte_left_rotate_word("DABC") == "ABCD"
-      assert Scheduler.one_byte_left_rotate_word("WXYZ") == "XYZW"
-      assert Scheduler.one_byte_left_rotate_word("ZYXW") == "YXWZ"
+    test "returns a string rotated one byte to the left when argument is a string" do
+      assert Scheduler.one_byte_left_rotate("ABCD") == "BCDA"
+      assert Scheduler.one_byte_left_rotate("DABC") == "ABCD"
+      assert Scheduler.one_byte_left_rotate("WXYZ") == "XYZW"
+    end
+
+    test "returns a binary rotated one byte to the left when argument is a binary" do
+      assert Scheduler.one_byte_left_rotate(<<1::8, 2::8, 3::8, 4::8>>) == <<2::8, 3::8, 4::8, 1::8>>
+      assert Scheduler.one_byte_left_rotate(<<255::8, 0::8, 78::8, 96::8>>) == <<0::8, 78::8, 96::8, 255::8>>
+      assert Scheduler.one_byte_left_rotate(<<127::8, 65::8, 30::8, 47::8>>) == <<65::8, 30::8, 47::8, 127::8>>
+    end
+
+    test "returns a list rotated one byte to the left when argument is a list" do
+      assert Scheduler.one_byte_left_rotate([1, 2, 3, 4]) == [2, 3, 4, 1]
+      assert Scheduler.one_byte_left_rotate([255, 0, 30, 47]) == [0, 30, 47, 255]
+      assert Scheduler.one_byte_left_rotate([127, 65, 30, 47]) == [65, 30, 47, 127]
     end
   end
 
   describe "sub_word/1" do
     test "returns a word with every byte correclty replaced according to the AES table" do
-      assert Scheduler.sub_word("ABCD") == [0x83, 0x2C, 0x1A, 0x1B] |> list_to_binary()
-      assert Scheduler.sub_word("KKKK") == [0xB3, 0xB3, 0xB3, 0xB3] |> list_to_binary()
-      assert Scheduler.sub_word("WXYZ") == [0x5B, 0x6A, 0xCB, 0xBE] |> list_to_binary()
+      assert Scheduler.sub_word("ABCD") == <<0x83::8, 0x2C::8, 0x1A::8, 0x1B::8>>
+      assert Scheduler.sub_word("KKKK") == <<0xB3::8, 0xB3::8, 0xB3::8, 0xB3::8>>
+      assert Scheduler.sub_word("WXYZ") == <<0x5B::8, 0x6A::8, 0xCB::8, 0xBE::8>>
     end
   end
 
@@ -34,6 +55,4 @@ defmodule Cryptographer.Aes.Key.SchedulerTest do
       assert Scheduler.compute_round_constant(10) == 0x36
     end
   end
-
-  defp list_to_binary([a, b, c, d]), do: <<a::8, b::8, c::8, d::8>>
 end
