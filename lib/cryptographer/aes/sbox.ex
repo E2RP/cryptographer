@@ -1,4 +1,8 @@
-defmodule Cryptographer.Aes.Table do
+defmodule Cryptographer.Aes.SBox do
+
+  alias Cryptographer.Aes
+  alias Cryptographer.Aes.BinaryUtils
+
   @table [
     0x63,
     0x7C,
@@ -257,8 +261,14 @@ defmodule Cryptographer.Aes.Table do
     0xBB,
     0x16
   ]
+  
+  @spec sub_word(word :: Aes.word_binary()) :: Aes.word_binary()
+  @spec sub_word(binary(), acc :: list(non_neg_integer())) :: list(non_neg_integer())
+  def sub_word(word), do: word |> sub_word([]) |> Enum.reverse() |> BinaryUtils.byte_list_to_word()
 
-  def get(), do: @table
+  defp sub_word(<<>>, acc), do: acc
+  defp sub_word(<<byte::8, rest::binary>>, acc), do: sub_word(rest, [sub_byte(byte) | acc])
 
-  def get_at(n), do: Enum.at(@table, n)
+  @spec sub_byte(byte :: non_neg_integer()) :: non_neg_integer()
+  def sub_byte(byte), do: Enum.at(@table, byte)
 end
