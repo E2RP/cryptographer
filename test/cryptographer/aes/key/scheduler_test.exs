@@ -112,14 +112,6 @@ defmodule Cryptographer.Aes.Key.SchedulerTest do
     end
   end
 
-  describe "sub_word/1" do
-    test "returns a word with every byte correclty replaced according to the AES table" do
-      assert Scheduler.sub_word("ABCD") == <<0x83::8, 0x2C::8, 0x1A::8, 0x1B::8>>
-      assert Scheduler.sub_word("KKKK") == <<0xB3::8, 0xB3::8, 0xB3::8, 0xB3::8>>
-      assert Scheduler.sub_word("WXYZ") == <<0x5B::8, 0x6A::8, 0xCB::8, 0xBE::8>>
-    end
-  end
-
   describe "round_constant/1" do
     test "returns the round constant correctly calculated regardig the round number" do
       assert Scheduler.compute_round_constant(1) == <<0x01::8, 0x00::8, 0x00::8, 0x00::8>>

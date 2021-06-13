@@ -1,6 +1,6 @@
 defmodule Cryptographer.Aes.Key.Scheduler do
   alias Cryptographer.Aes
-  alias Cryptographer.Aes.{BinaryUtils, Key, Table}
+  alias Cryptographer.Aes.{BinaryUtils, Key, SBox}
 
   @spec expand_key(key :: Key.t(), round :: pos_integer()) :: [Aes.word_binary(), ...]
   def expand_key(key, round) when is_binary(key) and round >= 1 do
@@ -21,14 +21,6 @@ defmodule Cryptographer.Aes.Key.Scheduler do
     |> Enum.into(<<>>, fn <<a::8, b::8, c::8, d::8>> -> <<a::8, b::8, c::8, d::8>> end)
   end
 
-  @spec sub_word(word :: Aes.word_binary()) :: Aes.word_binary()
-  @spec sub_word(binary(), acc :: list(non_neg_integer())) :: list(non_neg_integer())
-  def sub_word(word),
-    do: word |> sub_word([]) |> Enum.reverse() |> BinaryUtils.byte_list_to_word()
-
-  defp sub_word(<<>>, acc), do: acc
-  defp sub_word(<<byte::8, rest::binary>>, acc), do: sub_word(rest, [sub_byte(byte) | acc])
-
   @spec compute_round_constant(j :: pos_integer()) :: Aes.word_binary()
   @spec compute_round_constant(j :: pos_integer(), acc :: non_neg_integer()) :: pos_integer()
   def compute_round_constant(j),
@@ -48,10 +40,7 @@ defmodule Cryptographer.Aes.Key.Scheduler do
 
     word
     |> BinaryUtils.one_byte_left_rotate()
-    |> sub_word()
+    |> SBox.sub_word()
     |> BinaryUtils.bxor_words(round_constant)
   end
-
-  @spec sub_byte(byte :: non_neg_integer()) :: non_neg_integer()
-  defp sub_byte(byte), do: Table.get_at(byte)
 end
