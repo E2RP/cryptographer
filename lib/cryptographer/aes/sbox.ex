@@ -1,5 +1,4 @@
 defmodule Cryptographer.Aes.SBox do
-
   alias Cryptographer.Aes
   alias Cryptographer.Aes.BinaryUtils
 
@@ -261,10 +260,13 @@ defmodule Cryptographer.Aes.SBox do
     0xBB,
     0x16
   ]
-  
+
   @spec sub_word(words :: Aes.words()) :: Aes.words_binary()
-  @spec sub_word(binary() | list(byte()), acc :: list(byte())) :: list(byte()) | Aes.words_byte_list()
-  def sub_word(<<_::binary>> = word), do: word |> sub_word([]) |> Enum.reverse() |> BinaryUtils.byte_list_to_word()
+  @spec sub_word(binary() | list(byte()), acc :: list(byte())) ::
+          list(byte()) | Aes.words_byte_list()
+  def sub_word(<<_::binary>> = word),
+    do: word |> sub_word([]) |> Enum.reverse() |> BinaryUtils.byte_list_to_word()
+
   def sub_word([_ | _] = word), do: word |> sub_word([]) |> Enum.reverse()
 
   defp sub_word(<<>>, acc), do: acc

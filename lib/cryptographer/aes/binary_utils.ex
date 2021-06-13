@@ -6,7 +6,11 @@ defmodule Cryptographer.Aes.BinaryUtils do
   def one_byte_left_rotate([a, b, c, d]), do: [b, c, d, a]
 
   @spec bxor_words(word_a :: Aes.word_binary(), word_b :: Aes.word_binary()) :: Aes.word_binary()
-  @spec bxor_words(word_a :: Aes.words_binary(), word_b :: Aes.words_binary(), acc :: [] | Aes.word_byte_list()) :: Aes.word_byte_list()
+  @spec bxor_words(
+          word_a :: Aes.words_binary(),
+          word_b :: Aes.words_binary(),
+          acc :: [] | Aes.word_byte_list()
+        ) :: Aes.word_byte_list()
   def bxor_words(word_a, word_b), do: word_a |> bxor_words(word_b, []) |> byte_list_to_word()
   defp bxor_words(<<>>, <<>>, acc), do: acc
 

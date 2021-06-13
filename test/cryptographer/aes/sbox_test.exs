@@ -15,12 +15,16 @@ defmodule Cryptographer.Aes.SBoxTest do
     end
   end
 
-
   describe "sub_word/1" do
     test "returns a word binary with every byte correctly replaced when argument is a binary" do
-      assert SBox.sub_word(<<65::8, 66::8, 67::8, 68::8>>) == <<0x83::8, 0x2C::8, 0x1A::8, 0x1B::8>>
-      assert SBox.sub_word(<<75::8, 75::8, 75::8, 75::8>>) == <<0xB3::8, 0xB3::8, 0xB3::8, 0xB3::8>>
-      assert SBox.sub_word(<<87::8, 88::8, 89::8, 90::8>>) == <<0x5B::8, 0x6A::8, 0xCB::8, 0xBE::8>>
+      assert SBox.sub_word(<<65::8, 66::8, 67::8, 68::8>>) ==
+               <<0x83::8, 0x2C::8, 0x1A::8, 0x1B::8>>
+
+      assert SBox.sub_word(<<75::8, 75::8, 75::8, 75::8>>) ==
+               <<0xB3::8, 0xB3::8, 0xB3::8, 0xB3::8>>
+
+      assert SBox.sub_word(<<87::8, 88::8, 89::8, 90::8>>) ==
+               <<0x5B::8, 0x6A::8, 0xCB::8, 0xBE::8>>
     end
 
     test "returns a word binary with every byte correctly replaced when argument is a list" do
