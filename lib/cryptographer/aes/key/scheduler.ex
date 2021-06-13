@@ -2,7 +2,7 @@ defmodule Cryptographer.Aes.Key.Scheduler do
   alias Cryptographer.Aes
   alias Cryptographer.Aes.{BinaryUtils, Key, SBox}
 
-  @spec expand_key(key :: Key.t(), round :: pos_integer()) :: [Aes.word_binary(), ...]
+  @spec expand_key(key :: Key.t(), round :: pos_integer()) :: Key.t()
   def expand_key(key, round) when is_binary(key) and round >= 1 do
     round_words = BinaryUtils.binary_to_word_list(key)
 

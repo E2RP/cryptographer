@@ -262,12 +262,15 @@ defmodule Cryptographer.Aes.SBox do
     0x16
   ]
   
-  @spec sub_word(word :: Aes.word_binary()) :: Aes.word_binary()
-  @spec sub_word(binary(), acc :: list(non_neg_integer())) :: list(non_neg_integer())
-  def sub_word(word), do: word |> sub_word([]) |> Enum.reverse() |> BinaryUtils.byte_list_to_word()
+  @spec sub_word(words :: Aes.words()) :: Aes.words_binary()
+  @spec sub_word(binary() | list(byte()), acc :: list(byte())) :: list(byte()) | Aes.words_byte_list()
+  def sub_word(<<_::binary>> = word), do: word |> sub_word([]) |> Enum.reverse() |> BinaryUtils.byte_list_to_word()
+  def sub_word([_ | _] = word), do: word |> sub_word([]) |> Enum.reverse()
 
   defp sub_word(<<>>, acc), do: acc
   defp sub_word(<<byte::8, rest::binary>>, acc), do: sub_word(rest, [sub_byte(byte) | acc])
+  defp sub_word([], acc), do: acc
+  defp sub_word([byte | rest], acc), do: sub_word(rest, [sub_byte(byte) | acc])
 
   @spec sub_byte(byte :: non_neg_integer()) :: non_neg_integer()
   def sub_byte(byte), do: Enum.at(@table, byte)
