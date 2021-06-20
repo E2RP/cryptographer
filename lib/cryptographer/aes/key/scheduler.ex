@@ -2,8 +2,18 @@ defmodule Cryptographer.Aes.Key.Scheduler do
   alias Cryptographer.Aes
   alias Cryptographer.Aes.{BinaryUtils, Key, SBox}
 
-  @spec expand_key(key :: Key.t(), round :: pos_integer()) :: Key.t()
-  def expand_key(key, round) when is_binary(key) and round >= 1 do
+  @spec expand_key(key :: Key.t()) :: [Key.t(), ...]
+  def expand_key(key) do
+    {expanded_key, _} =
+      Enum.map_reduce(1..10, key, fn round, previous_key ->
+        previous_key |> do_round_key_expansion(round) |> Tuple.duplicate(2)
+      end)
+
+    expanded_key
+  end
+
+  @spec do_round_key_expansion(key :: Key.t(), round :: pos_integer()) :: Key.t()
+  def do_round_key_expansion(key, round) when is_binary(key) and round >= 1 do
     round_words = BinaryUtils.binary_to_word_list(key)
 
     round_words
