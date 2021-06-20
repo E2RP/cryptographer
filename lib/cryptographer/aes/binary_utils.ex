@@ -5,6 +5,13 @@ defmodule Cryptographer.Aes.BinaryUtils do
   def one_byte_left_rotate(<<a::8, b::8, c::8, d::8>>), do: <<b::8, c::8, d::8, a::8>>
   def one_byte_left_rotate([a, b, c, d]), do: [b, c, d, a]
 
+  def bxor_binaries(a, b) do
+    [a, b]
+    |> Enum.map(&:binary.decode_unsigned/1)
+    |> then(fn args -> apply(&Bitwise.bxor/2, args) end)
+    |> :binary.encode_unsigned()
+  end
+
   @spec bxor_words(word_a :: Aes.word_binary(), word_b :: Aes.word_binary()) :: Aes.word_binary()
   @spec bxor_words(
           word_a :: Aes.words_binary(),
