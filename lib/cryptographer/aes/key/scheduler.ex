@@ -9,7 +9,7 @@ defmodule Cryptographer.Aes.Key.Scheduler do
         previous_key |> do_round_key_expansion(round) |> Tuple.duplicate(2)
       end)
 
-    expanded_key
+    [key | expanded_key]
   end
 
   @spec do_round_key_expansion(key :: Key.t(), round :: pos_integer()) :: Key.t()
