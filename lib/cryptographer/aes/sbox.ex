@@ -264,8 +264,14 @@ defmodule Cryptographer.Aes.SBox do
   @spec sub_word(words :: Aes.words()) :: Aes.words_binary()
   @spec sub_word(binary() | list(byte()), acc :: list(byte())) ::
           list(byte()) | Aes.words_byte_list()
-  def sub_word(<<_::binary>> = word),
-    do: word |> sub_word([]) |> Enum.reverse() |> BinaryUtils.byte_list_to_word()
+  def sub_word(<<_::binary>> = word) do
+    word
+    |> sub_word([])
+    |> Enum.reverse()
+    |> Enum.chunk_every(4)
+    |> Enum.map(&BinaryUtils.byte_list_to_word/1)
+    |> Enum.into(<<>>, fn <<a::8, b::8, c::8, d::8>> -> <<a::8, b::8, c::8, d::8>> end)
+  end
 
   def sub_word([_ | _] = word), do: word |> sub_word([]) |> Enum.reverse()
 
