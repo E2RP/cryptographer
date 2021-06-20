@@ -274,6 +274,27 @@ defmodule Cryptographer.Aes.SBox do
   defp sub_word([], acc), do: acc
   defp sub_word([byte | rest], acc), do: sub_word(rest, [sub_byte(byte) | acc])
 
-  @spec sub_byte(byte :: non_neg_integer()) :: non_neg_integer()
+  @spec inverse_sub_word(words :: Aes.words()) :: Aes.words_binary()
+  @spec inverse_sub_word(binary() | list(byte()), acc :: list(byte())) ::
+          list(byte()) | Aes.words_byte_list()
+  def inverse_sub_word(<<_::binary>> = word),
+    do: word |> inverse_sub_word([]) |> Enum.reverse() |> BinaryUtils.byte_list_to_word()
+
+  def inverse_sub_word([_ | _] = word), do: word |> inverse_sub_word([]) |> Enum.reverse()
+
+  defp inverse_sub_word(<<>>, acc), do: acc
+
+  defp inverse_sub_word(<<byte::8, rest::binary>>, acc),
+    do: inverse_sub_word(rest, [inverse_sub_byte(byte) | acc])
+
+  defp inverse_sub_word([], acc), do: acc
+
+  defp inverse_sub_word([byte | rest], acc),
+    do: inverse_sub_word(rest, [inverse_sub_byte(byte) | acc])
+
+  @spec sub_byte(byte :: byte()) :: byte()
   def sub_byte(byte), do: Enum.at(@table, byte)
+
+  @spec inverse_sub_byte(byte :: byte()) :: byte()
+  def inverse_sub_byte(byte), do: @table |> Enum.find_index(&(&1 == byte))
 end
